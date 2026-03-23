@@ -669,6 +669,7 @@ function renderDaily() {
       <div class="days-outer"><div class="days-grid">${daysHtml}</div></div>
     </div>`;
   }).join('');
+  setTimeout(attachTouchDrag, 0);
 }
 
 function toggleDay(el) {
@@ -679,7 +680,9 @@ function toggleDay(el) {
   renderAll();
 }
 
-// ─── DRAG & DROP ────────────────────────────
+// ─── DRAG & DROP (desktop + mobile touch) ───
+let touchDragEl = null, touchPlaceholder = null, touchOffsetY = 0;
+
 function dragStart(e) { dragSrcId=e.currentTarget.dataset.id; e.currentTarget.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; }
 function dragOver(e)  { e.preventDefault(); e.dataTransfer.dropEffect='move'; document.querySelectorAll('.habit-row').forEach(r=>r.classList.remove('drag-over')); e.currentTarget.classList.add('drag-over'); }
 function dragDrop(e)  {
@@ -692,6 +695,73 @@ function dragDrop(e)  {
   save(); renderAll();
 }
 function dragEnd(e) { e.currentTarget.classList.remove('dragging'); document.querySelectorAll('.habit-row').forEach(r=>r.classList.remove('drag-over')); dragSrcId=null; }
+
+// Touch drag
+function touchStart(e) {
+  const row = e.currentTarget;
+  const handle = e.target.closest('.drag-handle');
+  if (!handle) return; // only drag from handle
+  e.preventDefault();
+  dragSrcId = row.dataset.id;
+  touchOffsetY = e.touches[0].clientY - row.getBoundingClientRect().top;
+
+  // clone as ghost
+  touchDragEl = row.cloneNode(true);
+  touchDragEl.style.cssText = `
+    position:fixed;z-index:999;width:${row.offsetWidth}px;
+    opacity:0.85;pointer-events:none;
+    left:${row.getBoundingClientRect().left}px;
+    top:${row.getBoundingClientRect().top}px;
+    box-shadow:0 8px 30px rgba(108,59,255,0.3);
+    border:1px solid var(--pu);border-radius:13px;
+  `;
+  document.body.appendChild(touchDragEl);
+  row.classList.add('dragging');
+}
+
+function touchMove(e) {
+  if (!touchDragEl) return;
+  e.preventDefault();
+  const y = e.touches[0].clientY;
+  const x = e.touches[0].clientX;
+  touchDragEl.style.top = (y - touchOffsetY) + 'px';
+
+  // find which row we're hovering
+  touchDragEl.style.display = 'none';
+  const elBelow = document.elementFromPoint(x, y);
+  touchDragEl.style.display = '';
+  const targetRow = elBelow && elBelow.closest('.habit-row[data-id]');
+  document.querySelectorAll('.habit-row').forEach(r => r.classList.remove('drag-over'));
+  if (targetRow && targetRow.dataset.id !== dragSrcId) targetRow.classList.add('drag-over');
+}
+
+function touchEnd(e) {
+  if (!touchDragEl) return;
+  const y = e.changedTouches[0].clientY;
+  const x = e.changedTouches[0].clientX;
+  touchDragEl.remove(); touchDragEl = null;
+  document.querySelectorAll('.habit-row').forEach(r => { r.classList.remove('dragging','drag-over'); });
+
+  const elBelow = document.elementFromPoint(x, y);
+  const targetRow = elBelow && elBelow.closest('.habit-row[data-id]');
+  if (targetRow && targetRow.dataset.id !== dragSrcId) {
+    const si=habits.findIndex(h=>h.id===dragSrcId), ti=habits.findIndex(h=>h.id===targetRow.dataset.id);
+    if (si>=0&&ti>=0) { const [m]=habits.splice(si,1); habits.splice(ti,0,m); save(); renderAll(); }
+  }
+  dragSrcId = null;
+}
+
+// attach touch listeners after render
+function attachTouchDrag() {
+  document.querySelectorAll('.habit-row[data-id]').forEach(row => {
+    row.removeEventListener('touchstart', touchStart);
+    row.removeEventListener('touchmove', touchMove);
+    row.removeEventListener('touchend', touchEnd);
+    row.addEventListener('touchstart', touchStart, {passive:false});
+    row.addEventListener('touchmove', touchMove, {passive:false});
+    row.addEventListener('touchend', touchEnd);
+  });
+}
 
 // ─── MONTHLY ────────────────────────────────
 function renderMonthly() {
