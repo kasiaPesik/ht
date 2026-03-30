@@ -169,33 +169,22 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 .wdiv-title{font-size:0.86rem;font-weight:700;color:var(--teal);margin-bottom:1px;}
 .wdiv-sub{font-size:0.66rem;color:var(--text2);}
 
-/* weekly grid table */
-.wk-grid-wrap{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);overflow:hidden;}
-.wk-week-nav{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);}
-.wk-week-lbl{font-size:0.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text2);}
-.wk-week-arrows{display:flex;gap:5px;}
-.wk-arr-btn{background:none;border:1px solid var(--border2);color:var(--text3);width:24px;height:24px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.75rem;transition:all .2s;}
-.wk-arr-btn:hover{border-color:var(--teal);color:var(--teal);}
-.wk-arr-btn:disabled{opacity:.25;pointer-events:none;}
-.wk-table{width:100%;border-collapse:collapse;}
-.wk-table th{font-size:0.55rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);text-align:center;padding:8px 4px 6px;border-bottom:1px solid var(--border);}
-.wk-table th.wk-th-name{text-align:left;padding-left:14px;min-width:130px;}
-.wk-table th.today-col{color:var(--cyan);}
-.wk-table td{padding:6px 4px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle;}
-.wk-table td.wk-td-name{text-align:left;padding-left:14px;padding-right:8px;}
-.wk-table tr:last-child td{border-bottom:none;}
-.wk-table tr:hover td{background:rgba(255,255,255,0.015);}
-.wk-habit-name-cell{display:flex;align-items:center;gap:7px;}
-.wk-habit-emoji{font-size:0.95rem;flex-shrink:0;}
-.wk-habit-label{font-size:0.8rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;}
-.wk-habit-actions{display:flex;gap:3px;margin-left:auto;flex-shrink:0;}
-.wk-cb{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border2);background:transparent;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;font-size:0.65rem;font-weight:900;color:transparent;}
-.wk-cb:hover:not([disabled]){border-color:var(--hc,var(--teal));box-shadow:0 0 7px rgba(20,184,166,0.25);transform:scale(1.1);}
-.wk-cb.checked{background:var(--hc,var(--teal));border-color:var(--hc,var(--teal));color:#fff;box-shadow:0 0 8px rgba(20,184,166,0.3);}
+/* weekly habit row */
+.wk-habit-row{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);margin-bottom:7px;overflow:hidden;transition:border-color .2s;position:relative;}
+.wk-habit-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--hc,var(--teal));opacity:.8;}
+.wk-habit-row:hover{border-color:var(--border3);}
+.wk-inner{display:flex;align-items:center;padding:11px 12px 11px 15px;gap:8px;flex-wrap:wrap;}
+.wk-name{font-size:0.85rem;font-weight:600;flex:1;min-width:90px;}
+/* 7 weekday checkboxes */
+.wk-days{display:flex;gap:5px;flex-wrap:wrap;align-items:center;padding:0 15px 11px 15px;}
+.wk-day-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.wk-day-lbl{font-size:0.48rem;font-weight:700;color:var(--text3);letter-spacing:.2px;text-transform:uppercase;}
+.wk-cb{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:0.65rem;font-weight:900;color:transparent;}
+.wk-cb:hover{border-color:var(--teal);box-shadow:0 0 7px rgba(20,184,166,0.25);transform:scale(1.08);}
+.wk-cb.checked{background:var(--teal);border-color:var(--teal);color:#fff;box-shadow:0 0 8px rgba(20,184,166,0.3);}
+/* current week highlight */
+.wk-cb.this-week{border-color:rgba(20,184,166,0.4);}
 .wk-cb.today-w{border-color:var(--cyan)!important;box-shadow:0 0 7px rgba(34,211,238,0.2);}
-.wk-cb.checked.today-w{background:var(--hc,var(--teal));border-color:var(--cyan)!important;}
-.wk-cb[disabled]{opacity:.2;cursor:default;pointer-events:none;}
-.wk-date-num{font-size:0.5rem;color:var(--text3);margin-top:2px;font-weight:600;display:block;font-variant-numeric:tabular-nums;}
 
 /* MONTHLY */
 .monthly-divider{display:flex;align-items:center;gap:12px;margin:22px 0 14px;padding:13px 16px;background:linear-gradient(135deg,rgba(108,59,255,0.06),rgba(168,85,247,0.03));border:1px solid rgba(108,59,255,0.12);border-radius:var(--r);position:relative;overflow:hidden;}
@@ -309,20 +298,15 @@ select option{background:var(--card2);}
   <div class="weekly-divider">
     <div>
       <div class="wdiv-title">Nawyki tygodniowe</div>
-      <div class="wdiv-sub">Zaznacz w które dni danego tygodnia zrobiłaś zadanie</div>
+      <div class="wdiv-sub">Stałe rytuały — zaznacz w które dni tygodnia zrobiłaś</div>
     </div>
-    <span class="sec-badge w" id="weeklyBadge" style="margin-left:auto;flex-shrink:0"></span>
   </div>
-  <div class="wk-grid-wrap">
-    <div class="wk-week-nav">
-      <span class="wk-week-lbl" id="wkWeekLbl"></span>
-      <div class="wk-week-arrows">
-        <button class="wk-arr-btn" id="wkBtnPrev">&#8592;</button>
-        <button class="wk-arr-btn" id="wkBtnNext">&#8594;</button>
-      </div>
-    </div>
-    <div id="weeklyList"></div>
+  <div class="sec-head" style="margin-top:0">
+    <span class="sec-lbl">Ten tydzień</span>
+    <div class="sec-line"></div>
+    <span class="sec-badge w" id="weeklyBadge"></span>
   </div>
+  <div id="weeklyList"></div>
 </div>
 
 <!-- MONTHLY -->
@@ -704,113 +688,51 @@ function doChangeWeek(id,color,row,dir){
 }
 
 // ── WEEKLY HABITS ────────────────────────────
-// Global week offset for the weekly grid (0 = current week)
-let wkOffset = 0;
-
-function getWeekMondayByOffset(offset){
-  const d = new Date(WEEK_MON);
-  d.setDate(d.getDate() + offset * 7);
-  return d;
-}
-
-function wkDateFromMon(monDate, dayOffset){
-  const d = new Date(monDate);
-  d.setDate(d.getDate() + dayOffset);
-  return d;
-}
-
-function wkKeyFromDate(date){
-  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
-}
-
-function formatWkWeekLabel(monDate){
-  const sun = new Date(monDate); sun.setDate(sun.getDate()+6);
-  const fmt = d => `${d.getDate()}.${String(d.getMonth()+1).padStart(2,'0')}`;
-  const isCurrentWeek = wkKeyFromDate(monDate) === wkKeyFromDate(WEEK_MON);
-  return isCurrentWeek ? `Ten tydzień · ${fmt(monDate)}–${fmt(sun)}` : `${fmt(monDate)}–${fmt(sun)} ${sun.getFullYear()}`;
-}
-
 function renderWeekly(){
-  const weekly = habits.filter(h => h.type === 'weekly');
-  const sec = document.getElementById('secWeekly');
-  if(!weekly.length){sec.style.display='none'; return;}
-  sec.style.display = '';
+  const weekly=habits.filter(h=>h.type==='weekly');
+  const sec=document.getElementById('secWeekly');
+  if(!weekly.length){sec.style.display='none';return;}
+  sec.style.display='';
 
-  const monDate = getWeekMondayByOffset(wkOffset);
-  const todayDow = MON_IDX(NOW.getDay()); // 0=Mon
-
-  // Week label
-  document.getElementById('wkWeekLbl').textContent = formatWkWeekLabel(monDate);
-
-  // Prev/Next buttons
-  const btnPrev = document.getElementById('wkBtnPrev');
-  const btnNext = document.getElementById('wkBtnNext');
-  btnPrev.disabled = wkOffset <= -52;
-  btnNext.disabled = wkOffset >= 0;
-
-  // Attach nav listeners once
-  btnPrev.onclick = () => { wkOffset--; renderWeekly(); };
-  btnNext.onclick = () => { wkOffset++; renderWeekly(); };
-
-  // Count done/total for this week
-  let weekDone = 0, weekTotal = 0;
-  weekly.forEach(h => {
-    const hd = getChk(h.id);
-    for(let i = 0; i < 7; i++){
-      const date = wkDateFromMon(monDate, i);
-      const n = new Date(); n.setHours(0,0,0,0);
-      date.setHours(0,0,0,0);
-      if(date <= n){ weekTotal++; if(hd[wkKeyFromDate(date)]) weekDone++; }
-    }
+  // Count done this week
+  let weekDone=0,weekTotal=weekly.length*7;
+  weekly.forEach(h=>{
+    const hd=getChk(h.id);
+    for(let i=0;i<7;i++){const k=wk(WEEK_MON,i);if(hd[k])weekDone++;}
   });
-  document.getElementById('weeklyBadge').textContent = `${weekDone}/${weekTotal} ten tydzień`;
+  document.getElementById('weeklyBadge').textContent=`${weekDone}/${weekTotal} ten tydzień`;
 
-  // Build table header
-  let thCols = `<th class="wk-th-name">Nawyk</th>`;
-  for(let i = 0; i < 7; i++){
-    const date = wkDateFromMon(monDate, i);
-    date.setHours(0,0,0,0);
-    const n = new Date(); n.setHours(0,0,0,0);
-    const isToday = wkOffset === 0 && i === todayDow;
-    const dateNum = date.getDate() + '.' + String(date.getMonth()+1).padStart(2,'0');
-    thCols += `<th class="${isToday?'today-col':''}">${WDAYS[i]}<br><span style="font-size:0.45rem;font-weight:500;opacity:.6">${dateNum}</span></th>`;
-  }
+  // Today's day of week (0=Mon)
+  const todayDow=MON_IDX(NOW.getDay());
 
-  // Build rows
-  const rows = weekly.map(h => {
-    const hd = getChk(h.id);
-    let tds = `<td class="wk-td-name">
-      <div class="wk-habit-name-cell">
-        <span class="wk-habit-emoji">${h.emoji}</span>
-        <span class="wk-habit-label">${h.name}</span>
-        <div class="wk-habit-actions">
-          <button class="btn-ic edit" onclick="openEdit('${h.id}')">✏️</button>
-          <button class="btn-ic" onclick="delHabit('${h.id}')">🗑</button>
-        </div>
+  document.getElementById('weeklyList').innerHTML=weekly.map(h=>{
+    const hd=getChk(h.id);
+    const cbsHtml=WDAYS.map((dn,i)=>{
+      const key=wk(WEEK_MON,i);
+      const checked=!!hd[key];
+      const isThisWeek=true; // always current week shown
+      const isTodayDow=i===todayDow;
+      // future = later this week
+      const dayDate=new Date(WEEK_MON);dayDate.setDate(dayDate.getDate()+i);dayDate.setHours(0,0,0,0);
+      const n=new Date();n.setHours(0,0,0,0);
+      const fut=dayDate>n;
+      let cls='wk-cb';
+      if(checked)cls+=' checked';
+      if(isTodayDow)cls+=' today-w';
+      return `<div class="wk-day-wrap">
+        <div class="wk-day-lbl">${dn}</div>
+        <div class="${cls}" data-id="${h.id}" data-key="${key}" onclick="toggleWeekDay(this)" style="color:${checked?'#fff':'transparent'};${fut&&!checked?'opacity:0.3;cursor:default;pointer-events:none':''}">✓</div>
+      </div>`;
+    }).join('');
+    return `<div class="wk-habit-row" style="--hc:${h.color||'#14b8a6'}">
+      <div class="wk-inner">
+        <span style="font-size:1rem;flex-shrink:0">${h.emoji}</span>
+        <span class="wk-name">${h.name}</span>
+        <div class="hab-btns"><button class="btn-ic edit" onclick="openEdit('${h.id}')">✏️</button><button class="btn-ic" onclick="delHabit('${h.id}')">🗑</button></div>
       </div>
-    </td>`;
-    for(let i = 0; i < 7; i++){
-      const date = wkDateFromMon(monDate, i);
-      date.setHours(0,0,0,0);
-      const n = new Date(); n.setHours(0,0,0,0);
-      const isFut = date > n;
-      const key = wkKeyFromDate(date);
-      const checked = !!hd[key];
-      const isToday = wkOffset === 0 && i === todayDow;
-      let cls = 'wk-cb';
-      if(checked) cls += ' checked';
-      if(isToday) cls += ' today-w';
-      const disabledAttr = isFut ? 'disabled' : '';
-      tds += `<td><div class="${cls}" ${disabledAttr} data-id="${h.id}" data-key="${key}" onclick="toggleWeekDay(this)" style="--hc:${h.color||'#14b8a6'};color:${checked?'#fff':'transparent'};margin:0 auto">✓</div></td>`;
-    }
-    return `<tr>${tds}</tr>`;
+      <div class="wk-days">${cbsHtml}</div>
+    </div>`;
   }).join('');
-
-  document.getElementById('weeklyList').innerHTML = `
-    <table class="wk-table">
-      <thead><tr>${thCols}</tr></thead>
-      <tbody>${rows}</tbody>
-    </table>`;
 }
 
 // ── MONTHLY ──────────────────────────────────
