@@ -38,6 +38,12 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 #monthLabel{font-weight:700;font-size:0.74rem;letter-spacing:1.8px;text-transform:uppercase;color:var(--text);min-width:126px;text-align:center;}
 .btn-add{background:var(--pu);color:#fff;border:none;border-radius:50px;padding:9px 20px;font-family:'Poppins',sans-serif;font-size:0.78rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .2s;box-shadow:0 4px 20px var(--pglow);}
 .btn-add:hover{transform:translateY(-2px);background:#7c4dff;box-shadow:0 8px 28px rgba(108,59,255,0.38);}
+.btn-sync{background:var(--card);border:1px solid var(--border2);border-radius:50px;padding:7px 13px;font-size:0.85rem;cursor:pointer;transition:all .2s;color:var(--text2);}
+.btn-sync:hover{border-color:var(--pu);color:var(--pu3);}
+.btn-sync.syncing{animation:spin 1s linear infinite;}
+.btn-sync.ok{color:var(--green);border-color:var(--green);}
+.btn-sync.err{color:var(--rose);border-color:var(--rose);}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
 /* ROUTINE TABS */
 .rtabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
@@ -169,22 +175,40 @@ header{display:flex;align-items:center;justify-content:space-between;margin-bott
 .wdiv-title{font-size:0.86rem;font-weight:700;color:var(--teal);margin-bottom:1px;}
 .wdiv-sub{font-size:0.66rem;color:var(--text2);}
 
-/* weekly habit row */
-.wk-habit-row{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);margin-bottom:7px;overflow:hidden;transition:border-color .2s;position:relative;}
-.wk-habit-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--hc,var(--teal));opacity:.8;}
-.wk-habit-row:hover{border-color:var(--border3);}
-.wk-inner{display:flex;align-items:center;padding:11px 12px 11px 15px;gap:8px;flex-wrap:wrap;}
-.wk-name{font-size:0.85rem;font-weight:600;flex:1;min-width:90px;}
-/* 7 weekday checkboxes */
-.wk-days{display:flex;gap:5px;flex-wrap:wrap;align-items:center;padding:0 15px 11px 15px;}
-.wk-day-wrap{display:flex;flex-direction:column;align-items:center;gap:3px;}
-.wk-day-lbl{font-size:0.48rem;font-weight:700;color:var(--text3);letter-spacing:.2px;text-transform:uppercase;}
-.wk-cb{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border2);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:0.65rem;font-weight:900;color:transparent;}
-.wk-cb:hover{border-color:var(--teal);box-shadow:0 0 7px rgba(20,184,166,0.25);transform:scale(1.08);}
-.wk-cb.checked{background:var(--teal);border-color:var(--teal);color:#fff;box-shadow:0 0 8px rgba(20,184,166,0.3);}
-/* current week highlight */
-.wk-cb.this-week{border-color:rgba(20,184,166,0.4);}
+/* weekly grid table */
+.wk-grid-wrap{background:var(--card);border:1px solid var(--border2);border-radius:var(--r);overflow:hidden;}
+.wk-week-nav{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);}
+.wk-week-lbl{font-size:0.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--text2);}
+.wk-week-arrows{display:flex;gap:5px;}
+.wk-arr-btn{background:none;border:1px solid var(--border2);color:var(--text3);width:24px;height:24px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:0.75rem;transition:all .2s;}
+.wk-arr-btn:hover{border-color:var(--teal);color:var(--teal);}
+.wk-arr-btn:disabled{opacity:.25;pointer-events:none;}
+.wk-table{width:100%;border-collapse:collapse;}
+.wk-table th{font-size:0.55rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text3);text-align:center;padding:8px 4px 6px;border-bottom:1px solid var(--border);}
+.wk-table th.wk-th-name{text-align:left;padding-left:14px;min-width:130px;}
+.wk-table th.today-col{color:var(--cyan);}
+.wk-table td{padding:6px 4px;border-bottom:1px solid var(--border);text-align:center;vertical-align:middle;}
+.wk-table td.wk-td-name{text-align:left;padding-left:14px;padding-right:8px;}
+.wk-table tr:last-child td{border-bottom:none;}
+.wk-table tr:hover td{background:rgba(255,255,255,0.015);}
+.wk-habit-name-cell{display:flex;align-items:center;gap:7px;}
+.wk-habit-emoji{font-size:0.95rem;flex-shrink:0;}
+.wk-habit-label{font-size:0.8rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:120px;}
+.wk-habit-actions{display:flex;gap:3px;margin-left:auto;flex-shrink:0;}
+.wk-cb{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--border2);background:transparent;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .15s;font-size:0.65rem;font-weight:900;color:transparent;}
+.wk-cb:hover:not([disabled]){border-color:var(--hc,var(--teal));box-shadow:0 0 7px rgba(20,184,166,0.25);transform:scale(1.1);}
+.wk-plan-active{box-shadow:0 0 8px rgba(20,184,166,0.3);}
+.wk-cb:not(.wk-plan-active):hover{background:rgba(255,255,255,0.05);}
+/* Day picker row in modal */
+.day-picker{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
+.day-pill{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:1.5px solid var(--border2);background:transparent;color:var(--text2);font-family:'Poppins',sans-serif;font-size:0.65rem;font-weight:700;cursor:pointer;transition:all .18s;user-select:none;}
+.day-pill:hover{border-color:var(--border3);color:var(--text);}
+.day-pill.sel{border-color:var(--sel-color,var(--teal));background:var(--sel-color,var(--teal));color:#fff;box-shadow:0 0 10px rgba(20,184,166,0.3);}
+.wk-cb.checked{background:var(--hc,var(--teal));border-color:var(--hc,var(--teal));color:#fff;box-shadow:0 0 8px rgba(20,184,166,0.3);}
 .wk-cb.today-w{border-color:var(--cyan)!important;box-shadow:0 0 7px rgba(34,211,238,0.2);}
+.wk-cb.checked.today-w{background:var(--hc,var(--teal));border-color:var(--cyan)!important;}
+.wk-cb[disabled]{opacity:.2;cursor:default;pointer-events:none;}
+.wk-date-num{font-size:0.5rem;color:var(--text3);margin-top:2px;font-weight:600;display:block;font-variant-numeric:tabular-nums;}
 
 /* MONTHLY */
 .monthly-divider{display:flex;align-items:center;gap:12px;margin:22px 0 14px;padding:13px 16px;background:linear-gradient(135deg,rgba(108,59,255,0.06),rgba(168,85,247,0.03));border:1px solid rgba(108,59,255,0.12);border-radius:var(--r);position:relative;overflow:hidden;}
@@ -263,8 +287,34 @@ select option{background:var(--card2);}
     <div id="monthLabel"></div>
     <button id="btnNext">&#8594;</button>
   </div>
-  <button class="btn-add" id="btnOpenModal">+ Nowy nawyk</button>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <button class="btn-sync" id="btnSync" title="Synchronizuj z GitHub Gist">☁️</button>
+    <button class="btn-add" id="btnOpenModal">+ Nowy nawyk</button>
+  </div>
 </header>
+
+<!-- GIST SETTINGS MODAL -->
+<div class="overlay" id="gistOverlay">
+  <div class="modal" style="max-width:440px;">
+    <h2>☁️ Synchronizacja z GitHub</h2>
+    <div class="fg">
+      <label>GitHub Personal Access Token</label>
+      <input type="password" id="gistToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+      <div style="font-size:0.62rem;color:var(--text3);margin-top:5px;line-height:1.5;">
+        Wejdź na <b style="color:var(--text2)">github.com → Settings → Developer settings → Personal access tokens → Tokens (classic)</b> i wygeneruj token z uprawnieniem <b style="color:var(--pu3)">gist</b>.
+      </div>
+    </div>
+    <div class="fg">
+      <label>Gist ID <span style="font-weight:400;text-transform:none;letter-spacing:0;">(zostaw puste przy pierwszym uruchomieniu)</span></label>
+      <input type="text" id="gistId" placeholder="Zostanie wypełnione automatycznie">
+    </div>
+    <div id="gistStatus" style="font-size:0.7rem;min-height:18px;margin-bottom:8px;color:var(--text2);"></div>
+    <div class="modal-btns">
+      <button class="btn-cancel" id="btnGistClose">Anuluj</button>
+      <button class="btn-save" id="btnGistSave">Zapisz i synchronizuj</button>
+    </div>
+  </div>
+</div>
 
 <div class="rtabs">
   <button class="rtab active" data-r="all">🌅 Wszystkie</button>
@@ -298,15 +348,20 @@ select option{background:var(--card2);}
   <div class="weekly-divider">
     <div>
       <div class="wdiv-title">Nawyki tygodniowe</div>
-      <div class="wdiv-sub">Stałe rytuały — zaznacz w które dni tygodnia zrobiłaś</div>
+      <div class="wdiv-sub">Plan dni tygodnia — edytuj przez ✏️ przy nawyku</div>
     </div>
+    <span class="sec-badge w" id="weeklyBadge" style="display:none"></span>
   </div>
-  <div class="sec-head" style="margin-top:0">
-    <span class="sec-lbl">Ten tydzień</span>
-    <div class="sec-line"></div>
-    <span class="sec-badge w" id="weeklyBadge"></span>
+  <div class="wk-grid-wrap">
+    <div class="wk-week-nav">
+      <span class="wk-week-lbl" id="wkWeekLbl"></span>
+      <div class="wk-week-arrows">
+        <button class="wk-arr-btn" id="wkBtnPrev">&#8592;</button>
+        <button class="wk-arr-btn" id="wkBtnNext">&#8594;</button>
+      </div>
+    </div>
+    <div id="weeklyList"></div>
   </div>
-  <div id="weeklyList"></div>
 </div>
 
 <!-- MONTHLY -->
@@ -370,6 +425,10 @@ select option{background:var(--card2);}
         </select>
       </div>
     </div>
+    <div class="fg" id="fgWeekDays" style="display:none">
+      <label>Dni tygodnia</label>
+      <div class="day-picker" id="dayPicker"></div>
+    </div>
     <div class="fg">
       <label>Kolor akcentu</label>
       <div class="colors" id="colorPicker"></div>
@@ -428,8 +487,131 @@ const isToday=d=>isViewNow()&&d===TD;
 function isFuture(d){const t=new Date(vY,vM,d);t.setHours(0,0,0,0);const n=new Date();n.setHours(0,0,0,0);return t>n;}
 const getChk=id=>checks[id]||{};
 function setChk(id,key,val){if(!checks[id])checks[id]={};if(val)checks[id][key]=true;else delete checks[id][key];save();}
-function save(){localStorage.setItem('hf7_habits',JSON.stringify(habits));localStorage.setItem('hf7_checks',JSON.stringify(checks));}
+function save(){
+  localStorage.setItem('hf7_habits',JSON.stringify(habits));
+  localStorage.setItem('hf7_checks',JSON.stringify(checks));
+  scheduleGistSave();
+}
 function toast(msg){const t=document.getElementById('toastEl');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
+
+// ── GITHUB GIST SYNC ─────────────────────────
+let gistSaveTimer=null;
+
+function getGistCreds(){
+  return{
+    token:localStorage.getItem('hf7_gh_token')||'',
+    gistId:localStorage.getItem('hf7_gist_id')||''
+  };
+}
+
+function setSyncStatus(msg,cls=''){
+  const el=document.getElementById('gistStatus');
+  if(el){el.textContent=msg;el.style.color=cls==='ok'?'var(--green)':cls==='err'?'var(--rose)':'var(--text2)';}
+}
+
+function setBtnState(state){
+  const btn=document.getElementById('btnSync');
+  if(!btn)return;
+  btn.className='btn-sync';
+  if(state==='syncing'){btn.classList.add('syncing');btn.textContent='🔄';}
+  else if(state==='ok'){btn.classList.add('ok');btn.textContent='✅';setTimeout(()=>{btn.textContent='☁️';btn.className='btn-sync';},2500);}
+  else if(state==='err'){btn.classList.add('err');btn.textContent='❌';setTimeout(()=>{btn.textContent='☁️';btn.className='btn-sync';},3000);}
+  else{btn.textContent='☁️';}
+}
+
+function scheduleGistSave(){
+  clearTimeout(gistSaveTimer);
+  gistSaveTimer=setTimeout(pushToGist,1500);
+}
+
+async function pushToGist(){
+  const{token,gistId}=getGistCreds();
+  if(!token)return;
+  const content=JSON.stringify({habits,checks},null,2);
+  setBtnState('syncing');
+  try{
+    let res,data;
+    if(!gistId){
+      // Create new gist
+      res=await fetch('https://api.github.com/gists',{
+        method:'POST',
+        headers:{'Authorization':`token ${token}`,'Content-Type':'application/json'},
+        body:JSON.stringify({description:'HabitFlow dane',public:false,files:{'habitflow.json':{content}}})
+      });
+      data=await res.json();
+      if(!res.ok)throw new Error(data.message||'Błąd tworzenia Gist');
+      localStorage.setItem('hf7_gist_id',data.id);
+      const inp=document.getElementById('gistId');
+      if(inp)inp.value=data.id;
+    }else{
+      // Update existing gist
+      res=await fetch(`https://api.github.com/gists/${gistId}`,{
+        method:'PATCH',
+        headers:{'Authorization':`token ${token}`,'Content-Type':'application/json'},
+        body:JSON.stringify({files:{'habitflow.json':{content}}})
+      });
+      data=await res.json();
+      if(!res.ok)throw new Error(data.message||'Błąd aktualizacji Gist');
+    }
+    setBtnState('ok');
+    setSyncStatus('Zsynchronizowano: '+new Date().toLocaleTimeString('pl'),'ok');
+  }catch(e){
+    setBtnState('err');
+    setSyncStatus('Błąd: '+e.message,'err');
+    console.error('Gist sync error:',e);
+  }
+}
+
+async function pullFromGist(){
+  const{token,gistId}=getGistCreds();
+  if(!token||!gistId)return false;
+  setBtnState('syncing');
+  try{
+    const res=await fetch(`https://api.github.com/gists/${gistId}`,{
+      headers:{'Authorization':`token ${token}`}
+    });
+    if(!res.ok)throw new Error('Nie można pobrać danych');
+    const data=await res.json();
+    const raw=data.files?.['habitflow.json']?.content;
+    if(!raw)throw new Error('Brak pliku w Gist');
+    const parsed=JSON.parse(raw);
+    if(parsed.habits)habits=parsed.habits;
+    if(parsed.checks)checks=parsed.checks;
+    localStorage.setItem('hf7_habits',JSON.stringify(habits));
+    localStorage.setItem('hf7_checks',JSON.stringify(checks));
+    setBtnState('ok');
+    setSyncStatus('Wczytano z chmury: '+new Date().toLocaleTimeString('pl'),'ok');
+    return true;
+  }catch(e){
+    setBtnState('err');
+    setSyncStatus('Błąd pobierania: '+e.message,'err');
+    console.error('Gist pull error:',e);
+    return false;
+  }
+}
+
+// Gist settings modal
+document.getElementById('btnSync').onclick=()=>{
+  const{token,gistId}=getGistCreds();
+  document.getElementById('gistToken').value=token;
+  document.getElementById('gistId').value=gistId;
+  setSyncStatus('');
+  document.getElementById('gistOverlay').classList.add('open');
+};
+document.getElementById('btnGistClose').onclick=()=>document.getElementById('gistOverlay').classList.remove('open');
+document.getElementById('gistOverlay').onclick=e=>{if(e.target===document.getElementById('gistOverlay'))document.getElementById('gistOverlay').classList.remove('open');};
+document.getElementById('btnGistSave').onclick=async()=>{
+  const token=document.getElementById('gistToken').value.trim();
+  const gistId=document.getElementById('gistId').value.trim();
+  if(!token){setSyncStatus('Wklej token GitHub!','err');return;}
+  localStorage.setItem('hf7_gh_token',token);
+  localStorage.setItem('hf7_gist_id',gistId);
+  setSyncStatus('Łączenie z GitHub...','');
+  const pulled=await pullFromGist();
+  if(pulled){renderAll();toast('✅ Dane wczytane z chmury!');}
+  else{await pushToGist();}
+  setTimeout(()=>document.getElementById('gistOverlay').classList.remove('open'),1500);
+};
 
 // ── STREAK ───────────────────────────────────
 function calcStreak(id){
@@ -484,16 +666,7 @@ function toggleDay(el){
   renderLine();
 }
 
-// Toggle a weekly checkbox in-place
-function toggleWeekDay(el){
-  const id=el.dataset.id,key=el.dataset.key;
-  const cur=!!getChk(id)[key];
-  setChk(id,key,!cur);
-  el.classList.toggle('checked',!cur);
-  el.textContent=!cur?'✓':'';
-  el.style.color=!cur?'#fff':'transparent';
-  renderKPI();
-}
+// (day plan editing handled via modal day picker)
 
 // Toggle monthly in-place
 function toggleMonthly(el){
@@ -688,51 +861,111 @@ function doChangeWeek(id,color,row,dir){
 }
 
 // ── WEEKLY HABITS ────────────────────────────
+let wkOffset = 0;
+function getWeekMondayByOffset(offset){
+  const d=new Date(WEEK_MON);d.setDate(d.getDate()+offset*7);return d;
+}
+function wkKeyFromDate(date){
+  return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`;
+}
+function formatWkWeekLabel(monDate){
+  const sun=new Date(monDate);sun.setDate(sun.getDate()+6);
+  const fmt=d=>`${d.getDate()}.${String(d.getMonth()+1).padStart(2,'0')}`;
+  const isCur=wkKeyFromDate(monDate)===wkKeyFromDate(WEEK_MON);
+  return isCur?`Ten tydzień · ${fmt(monDate)}–${fmt(sun)}`:`${fmt(monDate)}–${fmt(sun)} ${sun.getFullYear()}`;
+}
+
+function toggleWeekDone(el){
+  const id=el.dataset.id,key=el.dataset.key;
+  const cur=!!getChk(id)[key];
+  setChk(id,key,!cur);
+  const h=habits.find(h=>h.id===id);
+  const color=h?h.color||'#14b8a6':'#14b8a6';
+  if(!cur){
+    el.classList.add('wk-done');
+    el.style.background=color;el.style.borderColor=color;el.style.color='#fff';
+  } else {
+    el.classList.remove('wk-done');
+    el.style.background='transparent';el.style.borderColor=color;el.style.color=color;
+  }
+  renderKPI();
+}
+
 function renderWeekly(){
   const weekly=habits.filter(h=>h.type==='weekly');
   const sec=document.getElementById('secWeekly');
   if(!weekly.length){sec.style.display='none';return;}
   sec.style.display='';
 
-  // Count done this week
-  let weekDone=0,weekTotal=weekly.length*7;
-  weekly.forEach(h=>{
-    const hd=getChk(h.id);
-    for(let i=0;i<7;i++){const k=wk(WEEK_MON,i);if(hd[k])weekDone++;}
-  });
-  document.getElementById('weeklyBadge').textContent=`${weekDone}/${weekTotal} ten tydzień`;
-
-  // Today's day of week (0=Mon)
+  const monDate=getWeekMondayByOffset(wkOffset);
   const todayDow=MON_IDX(NOW.getDay());
 
-  document.getElementById('weeklyList').innerHTML=weekly.map(h=>{
+  document.getElementById('wkWeekLbl').textContent=formatWkWeekLabel(monDate);
+  document.getElementById('wkBtnPrev').style.display='';
+  document.getElementById('wkBtnNext').style.display='';
+  const btnPrev=document.getElementById('wkBtnPrev');
+  const btnNext=document.getElementById('wkBtnNext');
+  btnPrev.disabled=wkOffset<=-52;
+  btnNext.disabled=wkOffset>=0;
+  btnPrev.onclick=()=>{wkOffset--;renderWeekly();};
+  btnNext.onclick=()=>{wkOffset++;renderWeekly();};
+
+  // header: day names + dates
+  let thCols=`<th class="wk-th-name">Nawyk</th>`;
+  for(let i=0;i<7;i++){
+    const date=new Date(monDate);date.setDate(date.getDate()+i);
+    const isToday=wkOffset===0&&i===todayDow;
+    const dateNum=date.getDate()+'.'+String(date.getMonth()+1).padStart(2,'0');
+    thCols+=`<th class="${isToday?'today-col':''}">${WDAYS[i]}<br><span style="font-size:0.45rem;font-weight:500;opacity:.6">${dateNum}</span></th>`;
+  }
+
+  const rows=weekly.map(h=>{
+    if(!h.weekDays)h.weekDays=[];
     const hd=getChk(h.id);
-    const cbsHtml=WDAYS.map((dn,i)=>{
-      const key=wk(WEEK_MON,i);
-      const checked=!!hd[key];
-      const isThisWeek=true; // always current week shown
-      const isTodayDow=i===todayDow;
-      // future = later this week
-      const dayDate=new Date(WEEK_MON);dayDate.setDate(dayDate.getDate()+i);dayDate.setHours(0,0,0,0);
-      const n=new Date();n.setHours(0,0,0,0);
-      const fut=dayDate>n;
-      let cls='wk-cb';
-      if(checked)cls+=' checked';
-      if(isTodayDow)cls+=' today-w';
-      return `<div class="wk-day-wrap">
-        <div class="wk-day-lbl">${dn}</div>
-        <div class="${cls}" data-id="${h.id}" data-key="${key}" onclick="toggleWeekDay(this)" style="color:${checked?'#fff':'transparent'};${fut&&!checked?'opacity:0.3;cursor:default;pointer-events:none':''}">✓</div>
-      </div>`;
-    }).join('');
-    return `<div class="wk-habit-row" style="--hc:${h.color||'#14b8a6'}">
-      <div class="wk-inner">
-        <span style="font-size:1rem;flex-shrink:0">${h.emoji}</span>
-        <span class="wk-name">${h.name}</span>
-        <div class="hab-btns"><button class="btn-ic edit" onclick="openEdit('${h.id}')">✏️</button><button class="btn-ic" onclick="delHabit('${h.id}')">🗑</button></div>
+    const color=h.color||'#14b8a6';
+    let tds=`<td class="wk-td-name">
+      <div class="wk-habit-name-cell">
+        <span class="wk-habit-emoji">${h.emoji}</span>
+        <span class="wk-habit-label">${h.name}</span>
+        <div class="wk-habit-actions">
+          <button class="btn-ic edit" onclick="openEdit('${h.id}')">✏️</button>
+          <button class="btn-ic" onclick="delHabit('${h.id}')">🗑</button>
+        </div>
       </div>
-      <div class="wk-days">${cbsHtml}</div>
-    </div>`;
+    </td>`;
+    for(let i=0;i<7;i++){
+      const date=new Date(monDate);date.setDate(date.getDate()+i);date.setHours(0,0,0,0);
+      const now=new Date();now.setHours(0,0,0,0);
+      const planned=h.weekDays.includes(i);
+      const key=wkKeyFromDate(date);
+      const done=!!hd[key];
+      const isFut=date>now;
+      const isToday=wkOffset===0&&i===todayDow;
+
+      if(!planned){
+        // not in plan — empty grey dot, not clickable
+        tds+=`<td><div class="wk-cb" style="margin:0 auto;cursor:default;pointer-events:none;opacity:0.15"></div></td>`;
+      } else if(isFut){
+        // planned but future — show border only, not clickable
+        tds+=`<td><div class="wk-cb wk-plan-active" style="border-color:${color};border-width:2px;color:${color};background:transparent;margin:0 auto;cursor:default;pointer-events:none;opacity:0.4">✓</div></td>`;
+      } else {
+        // planned + past/today — clickable, toggles done
+        const bgStyle=done?`background:${color};border-color:${color};color:#fff;`:`background:transparent;border-color:${color};border-width:2px;color:${color};`;
+        const todayCls=isToday?' today-w':'';
+        tds+=`<td><div class="wk-cb wk-plan-active${done?' wk-done':''}${todayCls}"
+          data-id="${h.id}" data-key="${key}"
+          onclick="toggleWeekDone(this)"
+          style="${bgStyle}margin:0 auto;--hc:${color}">✓</div></td>`;
+      }
+    }
+    return `<tr>${tds}</tr>`;
   }).join('');
+
+  document.getElementById('weeklyList').innerHTML=`
+    <table class="wk-table">
+      <thead><tr>${thCols}</tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
 }
 
 // ── MONTHLY ──────────────────────────────────
@@ -784,7 +1017,7 @@ function dragEnd(e){e.currentTarget.classList.remove('dragging');document.queryS
 function touchStart(e){
   const row=e.currentTarget;
   if(!e.target.closest('.drag-handle'))return;
-  e.preventDefault();
+  // Don't preventDefault here — let scroll work; only block on touchMove when drag confirmed
   dragSrcId=row.dataset.id;
   touchOffsetY=e.touches[0].clientY-row.getBoundingClientRect().top;
   touchDragEl=row.cloneNode(true);
@@ -793,7 +1026,8 @@ function touchStart(e){
   row.classList.add('dragging');
 }
 function touchMove(e){
-  if(!touchDragEl)return;e.preventDefault();
+  if(!touchDragEl)return;
+  e.preventDefault(); // safe here — only called when drag is active
   const y=e.touches[0].clientY,x=e.touches[0].clientX;
   touchDragEl.style.top=(y-touchOffsetY)+'px';
   touchDragEl.style.display='none';
@@ -821,7 +1055,7 @@ function attachTouchDrag(){
     row.removeEventListener('touchstart',touchStart);
     row.removeEventListener('touchmove',touchMove);
     row.removeEventListener('touchend',touchEnd);
-    row.addEventListener('touchstart',touchStart,{passive:false});
+    row.addEventListener('touchstart',touchStart,{passive:true});
     row.addEventListener('touchmove',touchMove,{passive:false});
     row.addEventListener('touchend',touchEnd);
   });
@@ -842,6 +1076,22 @@ function buildModal(){
   document.getElementById('emojiGrid').innerHTML=EMOJIS.map(e=>`<button class="e-btn" onclick="pickEmoji(this,'${e}')">${e}</button>`).join('');
   document.getElementById('colorPicker').innerHTML=COLORS.map((c,i)=>`<div class="c-btn ${i===0?'sel':''}" style="background:${c}" onclick="pickColor(this,'${c}')"></div>`).join('');
   document.getElementById('fEmoji').addEventListener('input',function(){const v=this.value.trim();if(v){selEmoji=v;document.getElementById('emojiPrev').textContent=v;if(selEBtn){selEBtn.classList.remove('sel');selEBtn=null;}}});
+  document.getElementById('fType').addEventListener('change',function(){
+    const isW=this.value==='weekly';
+    document.getElementById('fgWeekDays').style.display=isW?'':'none';
+    if(isW)renderDayPicker();
+  });
+}
+let selWeekDays=[];
+function renderDayPicker(){
+  document.getElementById('dayPicker').innerHTML=WDAYS.map((d,i)=>`<div class="day-pill${selWeekDays.includes(i)?' sel':''}" style="${selWeekDays.includes(i)?'--sel-color:'+selColor:''}" data-dow="${i}" onclick="toggleDayPill(this)">${d}</div>`).join('');
+}
+function toggleDayPill(el){
+  const dow=parseInt(el.dataset.dow);
+  const idx=selWeekDays.indexOf(dow);
+  if(idx>=0)selWeekDays.splice(idx,1);else selWeekDays.push(dow);
+  el.classList.toggle('sel',selWeekDays.includes(dow));
+  el.style.cssText=selWeekDays.includes(dow)?`--sel-color:${selColor}`:'';
 }
 function pickEmoji(btn,e){if(selEBtn)selEBtn.classList.remove('sel');btn.classList.add('sel');selEBtn=btn;selEmoji=e;document.getElementById('emojiPrev').textContent=e;document.getElementById('fEmoji').value='';}
 function pickColor(btn,c){document.querySelectorAll('.c-btn').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');selColor=c;}
@@ -851,9 +1101,10 @@ document.getElementById('btnOpenModal').onclick=()=>{
   document.getElementById('fName').value='';document.getElementById('fType').value='daily';
   document.getElementById('fRoutine').value='all';document.getElementById('fEmoji').value='';
   document.getElementById('emojiPrev').textContent='✨';
-  selEmoji='✨';selColor=COLORS[0];
+  selEmoji='✨';selColor=COLORS[0];selWeekDays=[];
   document.querySelectorAll('.c-btn').forEach((b,i)=>b.classList.toggle('sel',i===0));
   document.querySelectorAll('.e-btn').forEach(b=>b.classList.remove('sel'));
+  document.getElementById('fgWeekDays').style.display='none';
   selEBtn=null;document.getElementById('modalOverlay').classList.add('open');
   setTimeout(()=>document.getElementById('fName').focus(),100);
 };
@@ -866,17 +1117,21 @@ function openEdit(id){
   document.getElementById('fName').value=h.name;document.getElementById('fType').value=h.type;
   document.getElementById('fRoutine').value=h.routine||'all';
   selEmoji=h.emoji;selColor=h.color||COLORS[0];
+  selWeekDays=h.type==='weekly'?[...(h.weekDays||[])]:[];
   document.getElementById('emojiPrev').textContent=h.emoji;document.getElementById('fEmoji').value='';
   document.querySelectorAll('.e-btn').forEach(b=>{const s=b.textContent===h.emoji;b.classList.toggle('sel',s);if(s)selEBtn=b;});
   document.querySelectorAll('.c-btn').forEach(b=>b.classList.toggle('sel',b.style.background===h.color));
+  const isW=h.type==='weekly';
+  document.getElementById('fgWeekDays').style.display=isW?'':'none';
+  if(isW)renderDayPicker();
   document.getElementById('modalOverlay').classList.add('open');
 }
 document.getElementById('btnSave').onclick=()=>{
   const name=document.getElementById('fName').value.trim();
   if(!name){toast('Wpisz nazwę nawyku!');document.getElementById('fName').focus();return;}
   const type=document.getElementById('fType').value,routine=document.getElementById('fRoutine').value;
-  if(editId){const h=habits.find(h=>h.id===editId);if(h){h.name=name;h.emoji=selEmoji;h.type=type;h.color=selColor;h.routine=routine;}toast('Nawyk zaktualizowany ✓');}
-  else{habits.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),name,emoji:selEmoji,type,color:selColor,routine});toast('Nowy nawyk dodany 🎉');}
+  if(editId){const h=habits.find(h=>h.id===editId);if(h){h.name=name;h.emoji=selEmoji;h.type=type;h.color=selColor;h.routine=routine;if(type==='weekly')h.weekDays=[...selWeekDays];}toast('Nawyk zaktualizowany ✓');}
+  else{habits.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5),name,emoji:selEmoji,type,color:selColor,routine,weekDays:type==='weekly'?[...selWeekDays]:[]});toast('Nowy nawyk dodany 🎉');}
   save();document.getElementById('modalOverlay').classList.remove('open');renderAll();
 };
 function delHabit(id){
@@ -896,15 +1151,24 @@ if(!habits.length){
     {id:'d2',name:'Poranne rozciąganie',emoji:'🤸',type:'daily',color:'#6c3bff',routine:'morning'},
     {id:'d3',name:'Czytanie 20 min',emoji:'📚',type:'daily',color:'#a855f7',routine:'evening'},
     {id:'d4',name:'Ruch / spacer',emoji:'🏃',type:'daily',color:'#10b981',routine:'daily'},
-    {id:'w1',name:'Planowanie tygodnia',emoji:'📋',type:'weekly',color:'#14b8a6',routine:'all'},
-    {id:'w2',name:'Dłuższy trening',emoji:'🏋️',type:'weekly',color:'#f59e0b',routine:'all'},
+    {id:'w1',name:'Planowanie tygodnia',emoji:'📋',type:'weekly',color:'#14b8a6',routine:'all',weekDays:[0]},
+    {id:'w2',name:'Dłuższy trening',emoji:'🏋️',type:'weekly',color:'#f59e0b',routine:'all',weekDays:[1,4]},
     {id:'m1',name:'Przegląd celów',emoji:'🎯',type:'monthly',color:'#f59e0b',routine:'all'},
     {id:'m2',name:'Sprzątanie',emoji:'🧹',type:'monthly',color:'#f43f5e',routine:'all'},
     {id:'m3',name:'Budżet miesięczny',emoji:'💰',type:'monthly',color:'#10b981',routine:'all'},
   ];
   save();
 }
-renderAll();
+// Auto-pull from Gist on load (if token exists)
+(async()=>{
+  const{token,gistId}=getGistCreds();
+  if(token&&gistId){
+    const pulled=await pullFromGist();
+    if(pulled)renderAll();else renderAll();
+  }else{
+    renderAll();
+  }
+})();
 </script>
 </body>
 </html>
