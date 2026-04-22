@@ -1069,7 +1069,13 @@ document.querySelectorAll('.rtab').forEach(btn=>{
   btn.onclick=()=>{document.querySelectorAll('.rtab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');activeR=btn.dataset.r;renderAll();};
 });
 let rzTimer;
-window.addEventListener('resize',()=>{clearTimeout(rzTimer);rzTimer=setTimeout(renderAll,200);});
+let lastW=window.innerWidth;
+window.addEventListener('resize',()=>{
+  if(window.innerWidth===lastW)return;
+  lastW=window.innerWidth;
+  clearTimeout(rzTimer);
+  rzTimer=setTimeout(renderAll,200);
+});
 
 // ── MODAL ────────────────────────────────────
 function buildModal(){
